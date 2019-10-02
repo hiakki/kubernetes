@@ -1,0 +1,8 @@
+#!/bin/bash
+export NUM\_NODES=1
+
+export KUBE\_AUTOSCALER\_MIN\_NODES=1
+
+export KUBE\_AUTOSCALER\_MAX\_NODES=2
+
+export KUBE\_ENABLE\_CLUSTER\_AUTOSCALER=true
