@@ -40,7 +40,7 @@ spec:
       volumes:
       - name: wp
         hostPath:
-          path: /home/ubuntu/tricksvibe/wordpress
+          path: /home/kube/tricksvibe/wordpress
       - name: conf
         hostPath:
-          path: /home/ubuntu/tricksvibe/nginx
+          path: /home/kube/tricksvibe/nginx
