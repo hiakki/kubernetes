@@ -4,7 +4,7 @@ metadata:
   name: blue
 spec:
   externalIPs:
-  - 192.168.1.8
+  - masterIP
   ports:
   - port: 80               
     protocol: TCP          
