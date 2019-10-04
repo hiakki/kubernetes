@@ -1,18 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tv
+  name: blue
   labels:
-    app: tv
+    app: blue
 spec:
-#  replicas: 10
   selector:
     matchLabels:
-      app: tv
+      app: blue
   template:
     metadata:
       labels:
-        app: tv
+        app: blue
     spec:
       containers:
       - name: nginx
