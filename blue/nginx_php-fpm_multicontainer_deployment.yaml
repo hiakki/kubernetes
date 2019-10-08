@@ -17,10 +17,12 @@ spec:
       - name: nginx
         image: nginx
         volumeMounts:
-        - mountPath: /var/www/html/
+        - mountPath: /usr/app/
           name: wp
         - mountPath: /etc/nginx/conf.d/
           name: conf
+        - mountPath: /var/log/nginx/
+          name: logs
         ports:
         - containerPort: 80
         resources:
@@ -29,7 +31,7 @@ spec:
       - name: php-fpm
         image: hiakki/php7.3-fpm_mysql
         volumeMounts:
-        - mountPath: /var/www/html/
+        - mountPath: /usr/app/
           name: wp
         ports:
         - containerPort: 9000
@@ -42,4 +44,8 @@ spec:
           path: /home/kube/tricksvibe/wordpress
       - name: conf
         hostPath:
-          path: /home/kube/tricksvibe/nginx
+          path: /home/kube/tricksvibe/nginx/conf.d
+      - name: logs
+        hostPath:
+          path: /home/kube/tricksvibe/nginx/logs
+

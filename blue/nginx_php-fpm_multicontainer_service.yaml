@@ -3,8 +3,9 @@ kind: Service
 metadata:
   name: blue
 spec:
+  type: LoadBalancer
   externalIPs:
-  - masterIP
+  - 192.168.1.8
   ports:
   - port: 80
     protocol: TCP
