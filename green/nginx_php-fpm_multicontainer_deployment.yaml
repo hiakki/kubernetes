@@ -15,31 +15,23 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx
+        image: hiakki/my-nginx
         volumeMounts:
-        - mountPath: /var/www/html/
-          name: wp
-        - mountPath: /etc/nginx/conf.d/
-          name: conf
+        - mountPath: /var/log/nginx/
+          name: logs
         ports:
         - containerPort: 80
         resources:
           requests:
             cpu: 10m
       - name: php-fpm
-        image: hiakki/php7.3-fpm_mysql
-        volumeMounts:
-        - mountPath: /var/www/html/
-          name: wp
+        image: hiakki/my-php
         ports:
         - containerPort: 9000
         resources:
           requests:
             cpu: 10m
       volumes:
-      - name: wp
+      - name: logs
         hostPath:
-          path: /home/kube/tricksvibe/wordpress
-      - name: conf
-        hostPath:
-          path: /home/kube/tricksvibe/nginx
+          path: /home/kube/logs
