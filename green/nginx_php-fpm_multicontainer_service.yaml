@@ -7,7 +7,7 @@ spec:
   externalIPs: 
   -  masterIP
   ports:
-  - port: 80
+  - port: 81
     protocol: TCP
     targetPort: 80
   selector:
