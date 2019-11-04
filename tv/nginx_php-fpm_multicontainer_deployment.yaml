@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tv
+  labels:
+    app: tv
+spec:
+  selector:
+    matchLabels:
+      app: tv
+  template:
+    metadata:
+      labels:
+        app: tv
+    spec:
+      containers:
+      - name: nginx
+        image: hiakki/tv-nginx
+#        command: [ "/bin/sh", "-c", "--" ]
+#        args: [ "while true; do sleep 30; done;" ]
+        volumeMounts:
+#        - mountPath: /usr/app/
+#          name: wp
+#        - mountPath: /etc/nginx/conf.d/
+#          name: conf
+        - mountPath: /var/log/nginx/
+          name: logs
+#        ports:
+#        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+      - name: php-fpm
+        image: hiakki/tv-php
+#        volumeMounts:
+#        - mountPath: /usr/app/
+#          name: wp
+#        ports:
+#        - containerPort: 9000
+        resources:
+          requests:
+            cpu: 100m
+      volumes:
+#      - name: wp
+#        hostPath:
+#          path: /home/kube/tricksvibe/wordpress
+#      - name: conf
+#        hostPath:
+#          path: /home/kube/tricksvibe/nginx/conf.d
+      - name: logs
+        hostPath:
+          path: /home/kube/tricksvibe/nginx/logs
+
