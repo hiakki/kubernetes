@@ -32,9 +32,11 @@ spec:
             cpu: 100m
       - name: php-fpm
         image: hiakki/tv-php
-#        volumeMounts:
+        volumeMounts:
 #        - mountPath: /usr/app/
 #          name: wp
+#        - mountPath: /usr/app/wp-config.php
+#          name: wp-conf
 #        ports:
 #        - containerPort: 9000
         resources:
@@ -43,11 +45,13 @@ spec:
       volumes:
 #      - name: wp
 #        hostPath:
-#          path: /home/kube/tricksvibe/wordpress
-#      - name: conf
-#        hostPath:
-#          path: /home/kube/tricksvibe/nginx/conf.d
+#          path: /home/kube/tricksvibe/
+      - name: conf
+        hostPath:
+          path: /home/kube/tricksvibe/nginx/conf.d
+      - name: wp-conf
+        hostPath:
+          path: /home/kube/tricksvibe/wp-config.php
       - name: logs
         hostPath:
           path: /home/kube/tricksvibe/nginx/logs
-
