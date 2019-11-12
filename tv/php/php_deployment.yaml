@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tv
+  name: php
   labels:
-    app: tv
+    app: php
 spec:
   selector:
     matchLabels:
-      app: tv
+      app: php
   template:
     metadata:
       labels:
-        app: tv
+        app: php
     spec:
       containers:
       - name: nginx
@@ -21,8 +21,8 @@ spec:
         volumeMounts:
 #        - mountPath: /usr/app/
 #          name: wp
-#        - mountPath: /etc/nginx/conf.d/
-#          name: conf
+        - mountPath: /etc/nginx/conf.d/
+          name: config
         - mountPath: /var/log/nginx/
           name: logs
 #        ports:
@@ -55,3 +55,9 @@ spec:
       - name: logs
         hostPath:
           path: /home/kube/tricksvibe/nginx/logs
+      - name: config
+        configMap:
+          name: nginx-config
+          items:
+          - key: config
+            path: site.conf

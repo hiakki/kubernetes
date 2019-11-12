@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: Service              
 metadata:
-  name: tv
+  name: php
 
 spec:
   type: LoadBalancer
   externalIPs:
   - 192.168.1.18
   ports:
-  - port: 80
+  - port: 9000
     protocol: TCP
-    targetPort: 80
-    nodePort: 30420
+    targetPort: 9000
+#    nodePort: 30420
   selector:
-    app: tv
+    app: php
