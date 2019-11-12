@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: Service              
 metadata:
-  name: php
+  name: my-php
 
 spec:
   type: LoadBalancer
   externalIPs:
-  - 192.168.1.18
+  - ext_ip
   ports:
-  - port: 9000
+  - port: ext_port_php
     protocol: TCP
     targetPort: 9000
-#    nodePort: 30420
+    nodePort: node_port_php
   selector:
-    app: php
+    app: my-php

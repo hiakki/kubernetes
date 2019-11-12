@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+  labels:
+    app: my-nginx
+spec:
+  selector:
+    matchLabels:
+      app: my-nginx
+  template:
+    metadata:
+      labels:
+        app: my-nginx
+    spec:
+      containers:
+      - name: my-nginx
+        image: hiakki/my-nginx
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d/
+          name: config
+        - mountPath: /var/log/nginx/
+          name: logs
+#        - mountPath: /usr/app/
+#          name: data
+        resources:
+          requests:
+            cpu: 100m
+      volumes:
+      - name: logs
+        hostPath:
+          path: /home/kube/tricksvibe/nginx/logs
+      - name: config
+        configMap:
+          name: my-nginx
+          items:
+          - key: config
+            path: site.conf
+#      - name: data
+#        awsElasticBlockStore:
+#          volumeID: vol-022dd5f42aeee337b
+#          fsType: ext4

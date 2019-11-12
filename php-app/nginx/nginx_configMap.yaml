@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-config
+  name: my-nginx
   labels:
     tier: backend
 data:
   config : |
     upstream fastcgi_backend {
-            server  192.168.1.18:9000;
+            server  ext_ip:ext_port_php;
     }
 
     server {
@@ -22,7 +22,7 @@ data:
 
         # Redirect all HTTP to HTTPS http://tricksvibe.tk/www.tricksvibe.tk -> https://wwww.$
         if ($http_x_forwarded_proto = 'http'){
-            return 301 https://www.tricksvibe.tk$request_uri;
+            return 301 https://website_name$request_uri;
         }
 
 

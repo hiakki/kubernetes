@@ -1,15 +1,16 @@
 apiVersion: v1
 kind: Service              
 metadata:
-  name: hd
+  name: my-nginx
+
 spec:
   type: LoadBalancer
-  externalIPs: 
-  - 192.168.1.18
+  externalIPs:
+  - ext_ip
   ports:
-  - port: 81
+  - port: ext_port_nginx
     protocol: TCP
     targetPort: 80
-    nodePort: 30421
+    nodePort: node_port_nginx
   selector:
-    app: hd
+    app: my-nginx
