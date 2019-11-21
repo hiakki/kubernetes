@@ -17,12 +17,18 @@ spec:
       - name: my-php
         image: hiakki/my-php
         volumeMounts:
-#        - mountPath: /usr/app/
-#          name: data
+        - mountPath: /usr/app/
+          name: data
         resources:
           requests:
             cpu: 100m
       volumes:
+      - name: data
+        hostPath:
+          path: /home/kube/app/my/
+#      - name: data
+#        persistentVolumeClaim:
+#          claimName: my-app
 #      - name: data
 #        awsElasticBlockStore:
 #          volumeID: vol-022dd5f42aeee337b

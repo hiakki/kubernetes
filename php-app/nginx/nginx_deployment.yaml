@@ -21,8 +21,8 @@ spec:
           name: config
         - mountPath: /var/log/nginx/
           name: logs
-#        - mountPath: /usr/app/
-#          name: data
+        - mountPath: /usr/app/
+          name: data
         resources:
           requests:
             cpu: 100m
@@ -30,12 +30,18 @@ spec:
       - name: logs
         hostPath:
           path: /home/kube/tricksvibe/nginx/logs
+      - name: data
+        hostPath:
+          path: /home/kube/app/my
       - name: config
         configMap:
           name: my-nginx
           items:
           - key: config
             path: site.conf
+#      - name: data
+#        persistentVolumeClaim:
+#          claimName: my-app
 #      - name: data
 #        awsElasticBlockStore:
 #          volumeID: vol-022dd5f42aeee337b
