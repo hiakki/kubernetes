@@ -3,7 +3,7 @@
 loc=$(dirname "$0")
 cd $PWD/$loc
 
-ext_ip=192.168.1.18
+ext_ip=masterIP
 
 case $1 in
 tv)
