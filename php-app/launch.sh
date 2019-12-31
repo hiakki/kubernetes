@@ -1,8 +1,6 @@
 #!/bin/bash
 
-loc=$(dirname "$0")
-cd $PWD/$loc
-
+cd /home/kube/kubernetes/php-app
 ext_ip=masterIP
 
 case $1 in
