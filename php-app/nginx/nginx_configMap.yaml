@@ -12,8 +12,12 @@ data:
 
     server {
         listen 80;
+        listen [::]:80;
+        
         server_name _;
 
+	      server_tokens off;
+  
         root /usr/app/;
         index index.php index.html;
 
@@ -21,10 +25,10 @@ data:
         error_log /var/log/nginx/error.log;
 
         # Redirect all HTTP to HTTPS http://tricksvibe.tk/www.tricksvibe.tk -> https://wwww.$
-        #if ($http_x_forwarded_proto = 'http'){
-        #    return 301 https://website_name$request_uri;
-        #}
-
+        if ($http_x_forwarded_proto != "https") {
+            rewrite ^(.*)$ https://$host$REQUEST_URI permanent;
+        }
+        
         location ~ \.php$ {
             root /usr/app/;
             index index.php index.html;
