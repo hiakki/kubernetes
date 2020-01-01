@@ -16,7 +16,7 @@ data:
         
         server_name _;
 
-	      server_tokens off;
+        server_tokens off;
   
         root /usr/app/;
         index index.php index.html;
