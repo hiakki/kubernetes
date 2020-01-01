@@ -16,16 +16,16 @@ spec:
       containers:
       - name: my-php
         image: hiakki/my-php
-        volumeMounts:
-        - mountPath: /usr/app/
-          name: data
+#        volumeMounts:
+#        - mountPath: /usr/app/
+#          name: data
         resources:
           requests:
             cpu: 100m
-      volumes:
-      - name: data
-        hostPath:
-          path: /home/kube/app/my/
+#      volumes:
+#      - name: data
+#        hostPath:
+#          path: /home/kube/app/my/
 #      - name: data
 #        persistentVolumeClaim:
 #          claimName: my-app
