@@ -17,7 +17,24 @@ data:
         server_name _;
 
         server_tokens off;
-  
+        # Enabling CSP
+        add_header Content-Security-Policy "default-src https: data: 'unsafe-inline' 'unsafe-eval'" always;
+
+        # Enabling HSTS
+        add_header Strict-Transport-Security "max-age=31536000; includeSubdomains" always;
+
+        # Enabling HTTP Public Key Pinning
+        add_header Public-Key-Pins "pin-sha256='X3pGTSOuJeEVw989IJ/cEtXUEmy52zs1TZQrU06KUKg='; pin-sha256='MHJYVThihUrJcxW6wcqyOISTXIsInsdj3xK8QrZbHec='; pin-sha256='isi41AizREkLvvft0IRW4u3XMFR2Yg7bvrF7padyCJg='; includeSubdomains; max-age=2592000" always;
+
+        # Enabling X-Frame-Options
+        add_header X-Frame-Options "SAMEORIGIN" always;
+
+        # Enabling X-XSS-Protection
+        add_header X-Xss-Protection "1; mode=block" always;
+
+        # Enabling X-Content-Type-Options
+        add_header X-Content-Type-Options "nosniff" always;
+
         root /usr/app/;
         index index.php index.html;
 
