@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-php-www-conf
+  labels:
+    tier: backend
+data:
+  config : |
       [PHP]
 
       ;;;;;;;;;;;;;;;;;;;
