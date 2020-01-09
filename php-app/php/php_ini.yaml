@@ -384,7 +384,7 @@ data:
     ; threat in any way, but it makes it possible to determine whether you use PHP
     ; on your server or not.
     ; http://php.net/expose-php
-    expose_php = On
+    expose_php = Off
 
     ;;;;;;;;;;;;;;;;;;;
     ; Resource Limits ;
@@ -414,7 +414,8 @@ data:
 
     ; Maximum amount of memory a script may consume (128MB)
     ; http://php.net/memory-limit
-    memory_limit = 128M
+    ; memory_limit = 128M
+    memory_limit = -1
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Error handling and logging ;
