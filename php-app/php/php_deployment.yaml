@@ -31,13 +31,13 @@ spec:
         configMap:
           name: my-php-www-conf
           items:
-          - key: www-conf
+          - key: wwwconf
             path: site.conf
       - name: php-ini
         configMap:
           name: my-php-ini
           items:
-          - key: php-ini
+          - key: phpini
             path: php.ini
       - name: data
         hostPath:
