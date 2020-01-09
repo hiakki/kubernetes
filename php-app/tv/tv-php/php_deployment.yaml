@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-php
+  name: tv-php
   labels:
-    app: my-php
+    app: tv-php
 spec:
   selector:
     matchLabels:
-      app: my-php
+      app: tv-php
   template:
     metadata:
       labels:
-        app: my-php
+        app: tv-php
     spec:
       containers:
-      - name: my-php
-        image: hiakki/my-php
+      - name: tv-php
+        image: hiakki/tv-php
         volumeMounts:
         - mountPath: /usr/local/etc/php-fpm.d/
           name: www-conf
@@ -29,13 +29,13 @@ spec:
       volumes:
       - name: www-conf
         configMap:
-          name: my-php-www-conf
+          name: tv-php-www-conf
           items:
           - key: wwwconf
             path: site.conf
       - name: php-ini
         configMap:
-          name: my-php-ini
+          name: tv-php-ini
           items:
           - key: phpini
             path: php.ini
@@ -44,7 +44,7 @@ spec:
           path: /home/kube/app/
 #      - name: data
 #        persistentVolumeClaim:
-#          claimName: my-app
+#          claimName: tv-app
 #      - name: data
 #        awsElasticBlockStore:
 #          volumeID: vol-022dd5f42aeee337b

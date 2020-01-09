@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /home/kube/kubernetes/php-app
-ext_ip=masterIP
+ext_ip=10.7.3.68
 
 case $1 in
 tv)
@@ -51,10 +51,14 @@ nginx_deployment="$my-nginx/nginx_deployment.yaml"
 nginx_service="$my-nginx/nginx_service.yaml"
 nginx_hpa="$my-nginx/nginx_hpa.yaml"
 
+php_ini="$my-php/php_ini.yaml"
+php_www="$my-php/php_www.conf.yaml"
 php_deployment="$my-php/php_deployment.yaml"
 php_service="$my-php/php_service.yaml"
 php_hpa="$my-php/php_hpa.yaml"
 
+sed -i "s/my/$my/g" $php_ini
+sed -i "s/my/$my/g" $php_www
 sed -i "s/my/$my/g" $php_deployment
 sed -i "s/my/$my/g" $php_service
 sed -i "s/ext_ip/$ext_ip/g" $php_service
