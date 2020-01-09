@@ -17,12 +17,28 @@ spec:
       - name: my-php
         image: hiakki/my-php
         volumeMounts:
+        - mountPath: /usr/local/etc/php-fpm.d/
+          name: www-conf
+        - mountPath: /usr/local/etc/php/
+          name: php-ini
         - mountPath: /usr/app/
           name: data
         resources:
           requests:
             cpu: 100m
       volumes:
+      - name: www-conf
+        configMap:
+          name: my-php-www-conf
+          items:
+          - key: www-conf
+            path: site.conf
+      - name: php-ini
+        configMap:
+          name: my-php-ini
+          items:
+          - key: php-ini
+            path: php.ini
       - name: data
         hostPath:
           path: /home/kube/app/
