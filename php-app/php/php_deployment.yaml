@@ -17,28 +17,26 @@ spec:
       - name: my-php
         image: hiakki/my-php
         volumeMounts:
-        - mountPath: /usr/local/etc/php-fpm.d/
-          name: www-conf
-        - mountPath: /usr/local/etc/php/
-          name: php-ini
+#         In below lines, I am replacing all files in dir php-fpm.d with www.conf only
+        - name: www-conf
+          mountPath: /usr/local/etc/php-fpm.d/
+          subPath: www.conf
+#         In below lines, I am creating php.ini file without removing or replacing any files or dirs
+        - name: php-ini
+          mountPath: /usr/local/etc/php/php.ini
+          subPath: php.ini
         - mountPath: /usr/app/
           name: data
         resources:
           requests:
-            cpu: 100m
+            cpu: 500m
       volumes:
       - name: www-conf
         configMap:
           name: my-php-www-conf
-          items:
-          - key: wwwconf
-            path: www.conf
       - name: php-ini
         configMap:
           name: my-php-ini
-          items:
-          - key: phpini
-            path: php.ini
       - name: data
         hostPath:
           path: /home/kube/app/

@@ -17,15 +17,15 @@ spec:
       - name: my-nginx
         image: hiakki/my-nginx
         volumeMounts:
-        - mountPath: /etc/nginx/conf.d/
-          name: config
-        - mountPath: /var/log/nginx/
-          name: logs
-        - mountPath: /usr/app/
-          name: data
+        - name: config
+          mountPath: /etc/nginx/conf.d/
+        - name: logs
+          mountPath: /var/log/nginx/
+        - name: data
+          mountPath: /usr/app/
         resources:
           requests:
-            cpu: 100m
+            cpu: 500m
       volumes:
       - name: logs
         hostPath:
