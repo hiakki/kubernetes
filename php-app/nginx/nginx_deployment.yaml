@@ -25,7 +25,7 @@ spec:
           mountPath: /usr/app/
         resources:
           requests:
-            cpu: 500m
+            cpu: 100m
       volumes:
       - name: logs
         hostPath:
