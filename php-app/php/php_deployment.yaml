@@ -32,7 +32,7 @@ spec:
           name: my-php-www-conf
           items:
           - key: wwwconf
-            path: site.conf
+            path: www.conf
       - name: php-ini
         configMap:
           name: my-php-ini

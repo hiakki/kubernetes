@@ -415,7 +415,7 @@ data:
     ; Maximum amount of memory a script may consume (128MB)
     ; http://php.net/memory-limit
     ; memory_limit = 128M
-    memory_limit = -1
+    memory_limit = 512M
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Error handling and logging ;
