@@ -1,15 +1,28 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: my-nginx
+  name: tv-nginx
   labels:
     tier: backend
 data:
   config : |
     upstream fastcgi_backend {
-            server  ext_ip:ext_port_php;
+            server ext_ip:ext_port_php;;
+    }
+ 
+    # Eliminate Render-Blocking Resources
+    map $http_cookie $resources {
+        "~*session=1" "";
+        default "</style.css>; as=style; rel=preload, </font.css>; as=style; rel=preload";
     }
 
+
+    # WebP Settings 
+    map $http_accept $webp_suffix {
+        default "";
+        "~*webp" ".webp";
+    }
+ 
     server {
         listen 80;
         listen [::]:80;
@@ -24,7 +37,7 @@ data:
         add_header Strict-Transport-Security "max-age=31536000; includeSubdomains" always;
 
         # Enabling HTTP Public Key Pinning
-        add_header Public-Key-Pins "pin-sha256='X3pGTSOuJeEVw989IJ/cEtXUEmy52zs1TZQrU06KUKg='; pin-sha256='MHJYVThihUrJcxW6wcqyOISTXIsInsdj3xK8QrZbHec='; pin-sha256='isi41AizREkLvvft0IRW4u3XMFR2Yg7bvrF7padyCJg='; includeSubdomains; max-age=2592000" always;
+        add_header Public-Key-Pins "pin-sha256='X3pGTSOuJeEVw989IJ/cEtXUEtv52zs1TZQrU06KUKg='; pin-sha256='MHJYVThihUrJcxW6wcqyOISTXIsInsdj3xK8QrZbHec='; pin-sha256='isi41AizREkLvvft0IRW4u3XMFR2Yg7bvrF7padyCJg='; includeSubdomains; max-age=2592000" always;
 
         # Enabling X-Frame-Options
         add_header X-Frame-Options "SAMEORIGIN" always;
@@ -64,6 +77,20 @@ data:
             add_header Cache-Control "public";
         }
 
+        # WebP Settings 
+        location ~* ^(/wp-content/.+)\.(png|jpe?g)$ {
+            set $base $1;
+            set $webp_uri $base$webp_suffix;
+            set $webp_old_uri $base.$2$webp_suffix;
+            set $root "/usr/app/wp-content/";
+            root $root;
+            add_header Vary Accept;
+            if ( !-f $root$webp_uri ) {
+                add_header X_WebP_SP_Miss $root$webp_uri;
+            }
+            try_files $webp_uri $webp_old_uri $uri =404;
+        }
+
         # Below are the settings for Wordpress Permalink setup
         location ~ ^(/[^/]+/)?files/(.+) {
             access_log off;     log_not_found off; expires max;
@@ -84,6 +111,9 @@ data:
 
         location / {
             try_files $uri $uri/ /index.php?$args ;
+            # Eliminate Render-Blocking Resources 
+            add_header Set-Cookie "session=1";
+            add_header Link $resources;
         }
 
     }
