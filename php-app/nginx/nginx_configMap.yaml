@@ -41,7 +41,7 @@ data:
         access_log /var/log/nginx/access.log;
         error_log /var/log/nginx/error.log;
 
-        # Redirect all HTTP to HTTPS http://tricksvibe.tk/www.tricksvibe.tk -> https://wwww.$
+        # Redirect all HTTP to HTTPS
         if ($http_x_forwarded_proto != "https") {
             rewrite ^(.*)$ https://$host$REQUEST_URI permanent;
         }

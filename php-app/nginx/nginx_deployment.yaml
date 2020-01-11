@@ -29,10 +29,10 @@ spec:
       volumes:
       - name: logs
         hostPath:
-          path: /home/kube/tricksvibe/nginx/logs
+          path: /home/kube/tricksvibe/nginx/logs/
       - name: data
         hostPath:
-          path: /home/kube/app
+          path: /home/kube/app/tricksvibe/
       - name: config
         configMap:
           name: my-nginx

@@ -17,31 +17,31 @@ spec:
       - name: my-php
         image: hiakki/my-php
         volumeMounts:
-        - name: www-conf
-          mountPath: /usr/local/etc/php-fpm.d/
-        - name: php-ini
-          mountPath: /usr/local/etc/php/
+#        - name: www-conf
+#          mountPath: /usr/local/etc/php-fpm.d/
+#        - name: php-ini
+#          mountPath: /usr/local/etc/php/
         - name: data
           mountPath: /usr/app/
         resources:
           requests:
             cpu: 100m
       volumes:
-      - name: www-conf
-        configMap:
-          name: my-php-www-conf
-          items:
-          - key: wwwconf
-            path: www.conf
-      - name: php-ini
-        configMap:
-          name: my-php-ini
-          items:
-          - key: phpini
-            path: php.ini
+#      - name: www-conf
+#        configMap:
+#          name: my-php-www-conf
+#          items:
+#          - key: wwwconf
+#            path: www.conf
+#      - name: php-ini
+#        configMap:
+#          name: my-php-ini
+#          items:
+#          - key: phpini
+#            path: php.ini
       - name: data
         hostPath:
-          path: /home/kube/app/
+          path: /home/kube/app/tricksvibe/
 #      - name: data
 #        persistentVolumeClaim:
 #          claimName: my-app
