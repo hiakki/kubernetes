@@ -15,12 +15,12 @@ https://Public_IPv4
 
 After this make sure to create a service account and secret
 
-#kubectl create serviceaccount <username>
+kubectl create serviceaccount (username)
 
-#kubectl create clusterrolebinding <username> --clusterrole=cluster-admin --serviceaccount=default:<username>
+kubectl create clusterrolebinding (username) --clusterrole=cluster-admin --serviceaccount=default:(username)
 
-#kubectl get secrets
+kubectl get secrets
 
-#kubectl describe secret <secret-name-you-got-from-previous-step>
+kubectl describe secret (secret-name-you-got-from-previous-step)
 
 # Dashboard will ask for token or config file, choose token on it and enter the token, you received from above step
