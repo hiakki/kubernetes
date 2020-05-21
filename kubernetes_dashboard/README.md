@@ -15,7 +15,7 @@ https://Public_IPv4
 
 After this make sure to create a service account and secret
 
-> kubectl create serviceaccount <username>
+> kubectl create serviceaccount \<username\>
 
 > kubectl create clusterrolebinding (username) --clusterrole=cluster-admin --serviceaccount=default:(username)
 
