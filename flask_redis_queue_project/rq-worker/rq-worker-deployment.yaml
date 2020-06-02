@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: redis
+    role: worker
+    tier: backend
+  name: rq-worker
+spec:
+  replicas: 1080
+  selector:
+    matchLabels:
+      app: redis
+      role: worker
+      tier: backend
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: redis
+        role: worker
+        tier: backend
+    spec:
+      containers:
+      - env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        - name: FLASK_CONFIGURATION
+          value: prod
+        - name: MONGO_P       
+          value: 'mongodb://draupadmin:rhrt6cgFGuKvdJzA@draup-db-arbiter.draup.technology:27017,draup-db-master.draup.technology:27017,draup-db-s1.draup.technology:27017,draup-db-s2.draup.technology:27017/admin?replicaSet=draup-harvestor-replica-set&readPreference=primary'
+        - name: ATLAS_MONGO   
+          value: 'mongodb://draupadmin:rhrt6cgFGuKvdJzA@mongodb-harvestor.draup.technology:27017,mongo-arbiter-harvestor.draup.technology:27017,mongodb1-harvestor.draup.technology:27017,mongodb2-harvestor.draup.technology:27017/admin?replicaSet=draup-atlas-harvestor-replica-set&readPreference=primary'
+        - name: REDISTOGO_URL 
+#          value: "redis://:greenpaper@redis-master:6379"
+          value: "redis://:greenpaper@opensky.draup.technology:6379"
+#        image: 774347290133.dkr.ecr.us-west-2.amazonaws.com/rq-worker
+        image: hiakki/rq-worker:v1
+        name: rq-worker
+        volumeMounts:
+        - name: flask-plutus-dir
+          mountPath: /flask_plutus
+#        command: [ "/bin/bash", "-c", "--" ]
+#        args: [ "while true; do sleep 30; done;" ]
+        command: [ "/bin/sh" ]
+        args:
+        - -c
+        - sleep 30; python worker_on_demand.py
+#        - sleep 30; python worker_pod.py
+#        - sleep 30; rq worker --config settings
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
+          limits:
+            cpu: 40m
+            memory: 250Mi
+      volumes:
+      - name: flask-plutus-dir
+        hostPath:
+          path: /home/ubuntu/efs/flask_plutus
+status: {}

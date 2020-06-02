@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: rq
+    role: dashboard
+    tier: frontend
+  name: rq-dashboard
+spec:
+  selector:
+    matchLabels:
+      app: rq
+      role: dashboard
+      tier: frontend
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rq
+        role: dashboard
+        tier: frontend
+    spec:
+      containers:
+      - env:
+        - name: GET_HOSTS_FROM
+          value: env
+#        image: 774347290133.dkr.ecr.us-west-2.amazonaws.com/rq-dashboard
+        image: hiakki/rq-dashboard:v1
+        name: rq-dashboard
+        command: [ "rq-dashboard" ]
+        args: [ "--port", "9181", "--redis-host", "redis-master", "--password", "" ]
+#        args:
+#        - --redis-host redis-master
+#        - --redis-port 6379
+#        - --password greenpaper
+#        - --port 9181
+#        args: ["--password", "greenpaper"]
+        ports:
+        - containerPort: 9181
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+      nodeSelector:
+        type: master_service
+status: {}

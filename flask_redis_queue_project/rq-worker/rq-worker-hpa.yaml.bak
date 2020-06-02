@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v1
+#apiVersion: autoscaling/v2beta2 
+kind: HorizontalPodAutoscaler
+metadata:
+  name: rq-worker
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1 
+    kind: Deployment 
+    name: rq-worker
+  minReplicas: 100
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 85
+#  metrics: 
+#  - type: Resource
+#    resource:
+#      name: memory 
+#      target:
+#        type: Utilization 
+#        averageValue: 500Mi 
