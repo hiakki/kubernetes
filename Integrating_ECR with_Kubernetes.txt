@@ -1,0 +1,6 @@
+# For ECR (We need sudo for this command,as docker is installed in root user)
+aws ecr get-login --no-include-email > login.sh
+sudo bash login.sh
+sudo kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson=/home/ubuntu/.docker/config.json \
+    --type=kubernetes.io/dockerconfigjson
