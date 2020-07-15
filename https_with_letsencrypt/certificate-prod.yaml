@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: prod-crt
+  namespace: testing
+spec:
+  secretName: prod-crt-tls
+  issuerRef:
+    name: letsencrypt-prod
+  commonName: prod.tricksvibe.tk
+  dnsNames:
+  - prod.tricksvibe.tk

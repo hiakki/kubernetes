@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: stag-ingress
+  namespace: testing
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    certmanager.k8s.io/cluster-issuer: letsencrypt-stag
+spec:
+  tls:
+  - hosts:
+    - stag.tricksvibe.tk
+    secretName: stag-crt-tls
+  rules:
+  - host: stag.tricksvibe.tk
+    http:
+      paths:
+      # The * is needed so that all traffic gets redirected to nginx
+      - backend:
+          serviceName: nginx
+          servicePort: 80

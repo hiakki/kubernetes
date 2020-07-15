@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: stag-crt
+  namespace: testing
+spec:
+  secretName: stag-crt-tls
+  issuerRef:
+    name: letsencrypt-stag
+  commonName: stag.tricksvibe.tk
+  dnsNames:
+  - stag.tricksvibe.tk

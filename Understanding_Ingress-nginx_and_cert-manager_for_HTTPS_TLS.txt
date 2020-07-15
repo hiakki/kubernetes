@@ -33,6 +33,8 @@ wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34
 kubectl apply -f deploy.yaml
 
 
+For HTTPS (automated SSL through Letsencrypt)
+
 Installing cert-manager (Ref - https://www.youtube.com/watch?v=Hwqm1D2EfFU)
 
 A. Using helm (I haven't used this) (Ref - https://hub.helm.sh/charts/jetstack/cert-manager)
@@ -63,36 +65,17 @@ kubectl apply -f cert-manager.yaml
 
 
 
-# After installing cert-manager, we need to deploy Issuers
-
-1. Create an isuer.yaml copy pasting the below lines
-piVersion: cert-manager.io/v1alpha2
-kind: ClusterIssuer
-metadata:
- name: letsencrypt-staging
- namespace: cert-manager
-spec:
- acme:
-   # The ACME server URL
-   server: https://acme-staging-v02.api.letsencrypt.org/directory
-   # Email address used for ACME registration
-   email: akshay.gupta@draup.com
-   # Name of a secret used to store the ACME account private key
-   privateKeySecretRef:
-     name: letsencrypt-staging
-   # Enable the HTTP-01 challenge provider
-   solvers:
-   - http01:
-       ingress:
-         class:  nginx
-
-
          
-# It can generate self-signed certificate and we can pass our private.key and certificate.crt in this to achieve HTTPS
+# We can achieve HTTPS by any of these methods:
+a. Self-Signed certificate (No need to do anything)
+b. Using priavte.key and certificate.crt from 3rd party websites like sslforfree.com (not-recommended)
+c. Letsencrypt ACME APIs (recommened)
 
+
+B. Using priavte.key and certificate.crt from 3rd party websites like sslforfree.com (not-recommended)
 # Passing our certificates as secret tls (I used sslforfree.com to get certificates, this is IMPORTANT, as without this  we can't achieve that Green Lock beside HTTPS)
 
-kubectl create secret tls tricksvibe-tls --cert=certs/kubernetes.crt --key=certs/private.key  -n services-master
+kubectl create secret tls temp-tls --cert=certs/kubernetes.crt --key=certs/private.key  -n services-master
 
 
 
@@ -103,7 +86,7 @@ In ingress.yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: api-docs-ingress
+  name: nginx-ingress
   namespace: services-master
   annotations:
     kubernetes.io/ingress.class: "nginx"                                # For connecting to ingress-nginx (Loadbalancer)
@@ -111,18 +94,171 @@ metadata:
 spec:
   tls:                                                                  # For HTTPS
   - hosts:                                                              # For HTTPS
-    - tricksvibe.tk                                          # For HTTPS (Domain Name)
-    secretName: tricksvibe-tls                                             # For HTTPS (Secret TLS that we created earlier)
+    - temp.tricksvibe.tk                                          # For HTTPS (Domain Name)
+    secretName: temp-tls                                             # For HTTPS (Secret TLS that we created earlier)
   rules:                                                                # For HTTPS
   - hosts:                                                              # For HTTPS
-    - tricksvibe.tk                                          # For HTTPS
+    - temp.tricksvibe.tk                                          # For HTTPS
   rules:
-  - host: tricksvibe.tk
+  - host: temp.tricksvibe.tk
     http:
       paths:
       - backend:
-          serviceName: api-docs                                         # Service Name, which we want to be behong Loadbalancer
-          servicePort: 8080                                             # Service Port, which you have exposed in service.yaml
+          serviceName: nginx                                         # Service Name, which we want to be behong Loadbalancer
+          servicePort: 80                                             # Service Port, which you have exposed in service.yaml
 
+
+
+C. Letsencrypt ACME APIs (recommened)
+# After installing cert-manager, we need to deploy Issuer, Certificate and modify ingress
+(Ref - https://cert-manager.io/docs/tutorials/acme/http-validation/)
+
+1. Creating issuer.yaml, this is also of 2 types
+a. For staging i.e., insecure HTTPS (not recommended)
+
+issuer.yaml ->
+
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: letsencrypt-staging
+  namespace: testing
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-staging-v02.api.letsencrypt.org/directory          # This is different for prod and staging
+    # Email address used for ACME registration
+    email: your_email_address
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    # An empty 'selector' means that this solver matches all domains
+    - selector: {}
+      http01:
+        ingress:
+          class: nginx
+
+
+certificate.yaml ->
+
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: testing-crt
+  namespace: testing
+spec:
+  secretName: testing-crt-tls
+  issuerRef:
+    name: letsencrypt-prod
+  commonName: testing.tricksvibe.tk
+  dnsNames:
+  - testing.tricksvibe.tk
+  
+
+In ingress.yaml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: testing-ingress
+  namespace: testing
+  annotations:
+    kubernetes.io/ingress.class: "nginx"                                # For connecting to ingress-nginx (Loadbalancer)
+    certmanager.k8s.io/cluster-issuer: letsencrypt-staging              # For HTTPS (takes from issuer, that we dpeloyed previously)
+spec:
+  tls:                                                                  # For HTTPS
+  - hosts:                                                              # For HTTPS
+    - testing.tricksvibe.tk                                          # For HTTPS (Domain Name)
+    secretName: testing-tls                                             # For HTTPS (Secret TLS that we created earlier)
+  rules:                                                                # For HTTPS
+  - hosts:                                                              # For HTTPS
+    - testing.tricksvibe.tk                                          # For HTTPS
+  rules:
+  - host: testing.tricksvibe.tk
+    http:
+      paths:
+      - backend:
+          serviceName: testing                                         # Service Name, which we want to be behong Loadbalancer
+          servicePort: 80                                              # Service Port, which you have exposed in service.yaml
+
+
+
+b. For prod i.e., secure HTTPS (recommended)
+
+issuer.yaml ->
+
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+  namespace: services-master
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-v02.api.letsencrypt.org/directory            # This is different for prod and staging
+    # Email address used for ACME registration
+    email: your_email_address
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    # An empty 'selector' means that this solver matches all domains
+    - selector: {}
+      http01:
+        ingress:
+          class: nginx
+
+
+certificate.yaml ->
+
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: temp-crt
+  namespace: services-master
+spec:
+  secretName: temp-crt-tls
+  issuerRef:
+    name: letsencrypt-prod
+  commonName: temp.tricksvibe.tk
+  dnsNames:
+  - temp.tricksvibe.tk
+  
+
+In ingress.yaml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  namespace: services-master
+  annotations:
+    kubernetes.io/ingress.class: "nginx"                                # For connecting to ingress-nginx (Loadbalancer)
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod                 # For HTTPS (takes from issuer, that we dpeloyed previously)
+spec:
+  tls:                                                                  # For HTTPS
+  - hosts:                                                              # For HTTPS
+    - temp.tricksvibe.tk                                          # For HTTPS (Domain Name)
+    secretName: temp-crt-tls                                         # For HTTPS (Secret TLS that we created earlier)
+  rules:                                                                # For HTTPS
+  - hosts:                                                              # For HTTPS
+    - temp.tricksvibe.tk                                          # For HTTPS
+  rules:
+  - host: temp.tricksvibe.tk
+    http:
+      paths:
+      - backend:
+          serviceName: nginx                                         # Service Name, which we want to be behong Loadbalancer
+          servicePort: 80                                             # Service Port, which you have exposed in service.yaml
+
+
+
+Note: Wait till certificate and issuer comes in ready state, till then keep on using describe
+
+kubectl get all,issuer,cert,secret,ing
 
 Now your wesbsite should be running on HTTPS with green lock icon.
+
