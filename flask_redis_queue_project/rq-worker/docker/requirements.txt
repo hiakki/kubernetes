@@ -46,7 +46,7 @@ mistune==0.8.3
 money-parser==0.0.1
 multidict==4.5.2
 newspaper3k==0.2.6
-nltk==3.3
+nltk==3.4.5
 numba==0.40.1
 numpy==1.15.4
 oauthlib==2.1.0
