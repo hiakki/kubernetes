@@ -1,0 +1,128 @@
+For installing nginx-ingress (Ref - https://www.youtube.com/watch?v=2VUQ4WjLxDg)
+
+ingress-nginx = Loadbalancer
+
+A. Using helm (I haven't used this)
+
+1. Installing helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm -rf get_helm.sh
+
+2. Adding stable repo (stable is local name for this repo https://kubernetes-charts.storage.googleapis.com)
+helm repo add stable https://kubernetes-charts.storage.googleapis.com
+
+3. Installing nginx-ingress (version 1.40.3 was used)
+helm install nginx-ingress stable/nginx-ingress --set rbac.create=true
+
+4. Debugging External IP  Pending issue
+kubectl get service/nginx-ingress-controller -o yaml > service.yaml
+
+In this service.yaml, update externalIP manually for type=Loadbalancer
+
+
+B. Using kubectl
+
+1. Downlaod its deploy.yaml
+wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.0/deploy/static/provider/cloud/deploy.yaml
+
+2. Update deploy.yaml to use only k8s-services-master for deployments and LoadBalancer External IP
+
+3. Deploy it 
+kubectl apply -f deploy.yaml
+
+
+Installing cert-manager (Ref - https://www.youtube.com/watch?v=Hwqm1D2EfFU)
+
+A. Using helm (I haven't used this) (Ref - https://hub.helm.sh/charts/jetstack/cert-manager)
+
+1. Installing helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm -rf get_helm.sh
+
+2. Add repo for it
+helm repo add jetstack https://charts.jetstack.io
+
+3. Install it
+helm install cert-manager --namespace cert-manager jetstack/cert-manager
+
+
+B. Using kubectl
+
+1. Download its yaml
+wget https://github.com/jetstack/cert-manager/releases/download/v0.15.2/cert-manager.yaml
+
+2. Update deploy.yaml to use only k8s-services-master for deployments and LoadBalancer External IP
+
+3. Deploy the following things
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.0-alpha.0/cert-manager.crds.yaml
+kubectl apply -f cert-manager.yaml
+
+
+
+# After installing cert-manager, we need to deploy Issuers
+
+1. Create an isuer.yaml copy pasting the below lines
+piVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+ name: letsencrypt-staging
+ namespace: cert-manager
+spec:
+ acme:
+   # The ACME server URL
+   server: https://acme-staging-v02.api.letsencrypt.org/directory
+   # Email address used for ACME registration
+   email: akshay.gupta@draup.com
+   # Name of a secret used to store the ACME account private key
+   privateKeySecretRef:
+     name: letsencrypt-staging
+   # Enable the HTTP-01 challenge provider
+   solvers:
+   - http01:
+       ingress:
+         class:  nginx
+
+
+         
+# It can generate self-signed certificate and we can pass our private.key and certificate.crt in this to achieve HTTPS
+
+# Passing our certificates as secret tls (I used sslforfree.com to get certificates, this is IMPORTANT, as without this  we can't achieve that Green Lock beside HTTPS)
+
+kubectl create secret tls tricksvibe-tls --cert=certs/kubernetes.crt --key=certs/private.key  -n services-master
+
+
+
+# Now, we have to modify our application's ingress.yaml according to these settings
+
+In ingress.yaml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-docs-ingress
+  namespace: services-master
+  annotations:
+    kubernetes.io/ingress.class: "nginx"                                # For connecting to ingress-nginx (Loadbalancer)
+    certmanager.k8s.io/cluster-issuer: letsencrypt-staging              # For HTTPS (takes from issuer, that we dpeloyed previously)
+spec:
+  tls:                                                                  # For HTTPS
+  - hosts:                                                              # For HTTPS
+    - tricksvibe.tk                                          # For HTTPS (Domain Name)
+    secretName: tricksvibe-tls                                             # For HTTPS (Secret TLS that we created earlier)
+  rules:                                                                # For HTTPS
+  - hosts:                                                              # For HTTPS
+    - tricksvibe.tk                                          # For HTTPS
+  rules:
+  - host: tricksvibe.tk
+    http:
+      paths:
+      - backend:
+          serviceName: api-docs                                         # Service Name, which we want to be behong Loadbalancer
+          servicePort: 8080                                             # Service Port, which you have exposed in service.yaml
+
+
+Now your wesbsite should be running on HTTPS with green lock icon.
