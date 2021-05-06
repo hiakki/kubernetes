@@ -22,7 +22,7 @@ feedfinder2==0.0.4
 feedparser==5.2.1
 flasgger==0.8.3
 Flask==1.0.2
-Flask-Cors==3.0.7
+Flask-Cors==3.0.9
 Flask-GraphQL==2.0.0
 Flask-JWT==0.3.2
 fuzzywuzzy==0.16.0
