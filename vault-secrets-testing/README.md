@@ -222,8 +222,3 @@ a. Add following lines in deployment resource, to get vault secrets as ENV VARS 
           args:
             ['sh', '-c', 'echo "source /vault/secrets/config" >> ~/.bashrc; while true; do sleep 5; done']
 
-
-
-
-
-vault-secrets-operator - s.bVxlrYQPQJ8irFwYpMU7b5AI
