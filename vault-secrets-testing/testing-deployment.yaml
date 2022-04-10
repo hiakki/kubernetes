@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+      # annotations:
+      #   vault.hashicorp.com/agent-inject: "true"
+      #   vault.hashicorp.com/agent-inject-status: "update"
+      #   vault.hashicorp.com/role: "vault-secrets-operator"
+      #   vault.hashicorp.com/agent-inject-secret-config: "kv_v2/data/database/config"
+      #   vault.hashicorp.com/agent-inject-template-config: |
+      #     {{- with secret "kv_v2/data/database/config" -}}
+      #     export username={{ .Data.data.username }}
+      #     export password={{ .Data.data.password }}
+      #     {{- end -}}
+    spec:
+      # serviceAccountName: vault-secrets-operator
+      containers:
+        - name: web
+          image: alpine
+          args:
+            # ['sh', '-c', 'echo "source /vault/secrets/config" >> ~/.bashrc; while true; do sleep 5; done']
+            ['sh','-c','while true; do sleep 5; done']
+          env:
+            # - name: foobar
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: example-sync
+            #       key: foobar
+            - name: username
+              valueFrom:
+                secretKeyRef:
+                  name: kv-v2-db-secrets
+                  key: username
+            - name: password
+              valueFrom:
+                secretKeyRef:
+                  name: kv-v2-db-secrets
+                  key: password
+          ports:
+            - containerPort: 9090
