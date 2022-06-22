@@ -48,7 +48,7 @@ multidict==4.5.2
 newspaper3k==0.2.6
 nltk==3.3
 numba==0.40.1
-numpy==1.15.4
+numpy==1.22.0
 oauthlib==2.1.0
 pandas==0.24.1
 Pillow==6.2.0
