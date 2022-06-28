@@ -1,7 +1,7 @@
 aiohttp==3.5.4
 aniso8601==3.0.2
 APScheduler==3.5.1
-arrow==0.12.1
+arrow==0.15.1
 async-timeout==3.0.1
 attrs==18.2.0
 beautifulsoup4==4.6.0
