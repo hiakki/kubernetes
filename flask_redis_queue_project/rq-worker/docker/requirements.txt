@@ -40,7 +40,7 @@ jmespath==0.9.3
 jsonschema==2.6.0
 llvmlite==0.25.0
 log4mongo==1.6.2
-lxml==4.2.1
+lxml==4.9.1
 MarkupSafe==1.0
 mistune==0.8.3
 money-parser==0.0.1
