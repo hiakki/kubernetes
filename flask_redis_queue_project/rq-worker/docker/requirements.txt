@@ -75,7 +75,7 @@ rq-dashboard==0.3.11
 Rx==1.6.1
 s3transfer==0.1.13
 selenium==2.53.6
-setuptools==45
+setuptools==65.5.1
 six==1.10.0
 SQLAlchemy==1.2.7
 tldextract==2.2.0
